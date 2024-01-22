@@ -189,7 +189,7 @@ public class Store {
 		
 		JComboBox txtQuality = new JComboBox();
 		txtQuality.setModel(new DefaultComboBoxModel(new String[] {"Used", "New"}));
-		txtQuality.setBounds(161, 403, 79, 21);
+		txtQuality.setBounds(161, 400, 79, 27);
 		panel.add(txtQuality);
 		
 		JButton btnNewButton_1 = new JButton("FIND");
@@ -206,65 +206,77 @@ public class Store {
 		txtDate.setBounds(161, 300, 176, 26);
 		panel.add(txtDate);
 		
-		JButton btnNewButton = new JButton("ADD NEW\r\n");
-		btnNewButton.setBounds(296, 401, 135, 26);
-		panel.add(btnNewButton);
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnUpdate = new JButton("UPDATE");
+		btnUpdate.setBounds(296, 403, 135, 26);
+		panel.add(btnUpdate);
+		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+		            // Lấy chỉ số hàng được chọn trong bảng
+		            int selectedRow = table.getSelectedRow();
+
+		            // Kiểm tra xem có hàng nào được chọn không
+		            if (selectedRow == -1) {
+		                JOptionPane.showMessageDialog(frame, "Vui lòng chọn một hàng để cập nhật.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+		                return;
+		            }
+
 		            // Lấy dữ liệu từ các trường nhập liệu
 		            String pid = txtPID.getText();
 		            String pname = txtPname.getText();
 		            String edition = txtEdition.getText();
 		            String price = txtPrice.getText();
 		            String quantity = txtQuantity.getText();
-		           
 		            String status = txtStatus.getSelectedItem().toString();
 		            String quality = txtQuality.getSelectedItem().toString();
 		            
 		            // Lấy ngày từ JDateChooser
-                    java.util.Date utilDate = txtDate.getDate();
-                    java.sql.Date date = new java.sql.Date(utilDate.getTime());
-                    
-                    
+		            java.util.Date utilDate = txtDate.getDate();
+		            java.sql.Date date = new java.sql.Date(utilDate.getTime());
 
-                    // Kiểm tra xem có trường nào trống không
-                    if (pid.isEmpty() || pname.isEmpty() || edition.isEmpty() || price.isEmpty() || quantity.isEmpty() || date == null || status.isEmpty() || quality.isEmpty()) {
-                        JOptionPane.showMessageDialog(frame, "Vui lòng nhập đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                        return; // Không thực hiện thêm vào bảng nếu có trường trống
-                    }
-
-		            
-		            
-           
-		            
+		            // Kiểm tra xem có trường nào trống không
+		            if (pid.isEmpty() || pname.isEmpty() || edition.isEmpty() || price.isEmpty() || quantity.isEmpty() || date == null || status.isEmpty() || quality.isEmpty()) {
+		                JOptionPane.showMessageDialog(frame, "Vui lòng nhập đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+		                return;
+		            }
 
 		            // Chuyển đổi các giá trị cần thiết thành kiểu phù hợp
 		            int intPrice = Integer.parseInt(price);
 		            int intQuantity = Integer.parseInt(quantity);
 
-		            // Thêm dữ liệu vào bảng (giả sử `table` là đối tượng JTable của bạn)
+		            // Cập nhật dữ liệu của hàng được chọn trong bảng
 		            DefaultTableModel model = (DefaultTableModel) table.getModel();
-		            model.addRow(new Object[]{pid, pname, edition, intPrice, intQuantity, date, status, quality});
+		            model.setValueAt(pid, selectedRow, 0);
+		            model.setValueAt(pname, selectedRow, 1);
+		            model.setValueAt(edition, selectedRow, 2);
+		            model.setValueAt(intPrice, selectedRow, 3);
+		            model.setValueAt(intQuantity, selectedRow, 4);
+		            model.setValueAt(date, selectedRow, 5);
+		            model.setValueAt(status, selectedRow, 6);
+		            model.setValueAt(quality, selectedRow, 7);
 
-		            // Xóa dữ liệu từ các trường nhập liệu sau khi thêm
+		            // Xóa dữ liệu từ các trường nhập liệu sau khi cập nhật
 		            txtPID.setText(null);
 		            txtPname.setText(null);
 		            txtEdition.setText(null);
 		            txtPrice.setText(null);
 		            txtQuantity.setText(null);
 		            txtDate.setDate(null);
-		            txtStatus.setSelectedItem(model);
-		            txtQuality.setSelectedItem(model);
+		            txtStatus.setSelectedIndex(0);
+		            txtQuality.setSelectedIndex(0);
+
+		            JOptionPane.showMessageDialog(frame, "Dữ liệu đã được cập nhật thành công.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
 		        } catch (NumberFormatException ex) {
 		            JOptionPane.showMessageDialog(frame, "Vui lòng nhập giá và số lượng là số nguyên.", "Lỗi", JOptionPane.ERROR_MESSAGE);
 		        }
 		    }
-		});
+		
 				
-			
-		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 13));
+	
+	
+		});
+		btnUpdate.setFont(new Font("Tahoma", Font.BOLD, 13));
 		
 		JButton btnPrint = new JButton("PRINT");
 		btnPrint.addActionListener(new ActionListener() {
@@ -284,7 +296,7 @@ public class Store {
 			}
 		});
 		btnPrint.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnPrint.setBounds(266, 605, 135, 50);
+		btnPrint.setBounds(376, 617, 135, 50);
 		frame.getContentPane().add(btnPrint);
 		
 		JButton btnReset = new JButton("RESET");
@@ -302,7 +314,7 @@ public class Store {
 			}
 		});
 		btnReset.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnReset.setBounds(553, 605, 135, 50);
+		btnReset.setBounds(665, 617, 135, 50);
 		frame.getContentPane().add(btnReset);
 		
 		JButton btnExit = new JButton("EXIT");
@@ -324,7 +336,7 @@ public class Store {
             }
         });
 		btnExit.setFont(new Font("Tahoma", Font.BOLD, 13));
-		btnExit.setBounds(829, 605, 135, 50);
+		btnExit.setBounds(948, 617, 135, 50);
 		frame.getContentPane().add(btnExit);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -362,8 +374,8 @@ public class Store {
 		scrollPane.setViewportView(table);
 		
 		JLabel lblNewLabel_1 = new JLabel("COMPUTER COMPONENT STORE");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 30));
-		lblNewLabel_1.setBounds(350, 23, 561, 66);
+		lblNewLabel_1.setFont(new Font("Segoe UI", Font.BOLD | Font.ITALIC, 30));
+		lblNewLabel_1.setBounds(379, 23, 503, 50);
 		frame.getContentPane().add(lblNewLabel_1);
 		
 		JPanel panel_1 = new JPanel();
@@ -371,6 +383,61 @@ public class Store {
 		panel_1.setBounds(505, 105, 706, 490);
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
+		
+		JButton btnNewButton = new JButton("ADD NEW\r\n");
+		btnNewButton.setBounds(110, 617, 135, 50);
+		frame.getContentPane().add(btnNewButton);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+		            // Lấy dữ liệu từ các trường nhập liệu
+		            String pid = txtPID.getText();
+		            String pname = txtPname.getText();
+		            String edition = txtEdition.getText();
+		            String price = txtPrice.getText();
+		            String quantity = txtQuantity.getText();
+		           
+		            String status = txtStatus.getSelectedItem().toString();
+		            String quality = txtQuality.getSelectedItem().toString();
+		            
+		            // Lấy ngày từ JDateChooser
+                    java.util.Date utilDate = txtDate.getDate();
+                    java.sql.Date date = new java.sql.Date(utilDate.getTime());
+                    
+                    
+
+                    // Kiểm tra xem có trường nào trống không
+                    if (pid.isEmpty() || pname.isEmpty() || edition.isEmpty() || price.isEmpty() || quantity.isEmpty() || date == null || status.isEmpty() || quality.isEmpty()) {
+                        JOptionPane.showMessageDialog(frame, "Vui lòng nhập đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return; // Không thực hiện thêm vào bảng nếu có trường trống
+                    }
+
+		            // Chuyển đổi các giá trị cần thiết thành kiểu phù hợp
+		            int intPrice = Integer.parseInt(price);
+		            int intQuantity = Integer.parseInt(quantity);
+
+		            // Thêm dữ liệu vào bảng (giả sử `table` là đối tượng JTable của bạn)
+		            DefaultTableModel model = (DefaultTableModel) table.getModel();
+		            model.addRow(new Object[]{pid, pname, edition, intPrice, intQuantity, date, status, quality});
+
+		            // Xóa dữ liệu từ các trường nhập liệu sau khi thêm
+		            txtPID.setText(null);
+		            txtPname.setText(null);
+		            txtEdition.setText(null);
+		            txtPrice.setText(null);
+		            txtQuantity.setText(null);
+		            txtDate.setDate(null);
+		            txtStatus.setSelectedItem(model);
+		            txtQuality.setSelectedItem(model);
+
+		        } catch (NumberFormatException ex) {
+		            JOptionPane.showMessageDialog(frame, "Vui lòng nhập giá và số lượng là số nguyên.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+		        }
+		    }
+		});
+		
+			
+		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 13));
 	}
 
 
